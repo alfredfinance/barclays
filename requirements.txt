@@ -12,3 +12,4 @@ google-auth-oauthlib
 google-auth-httplib2
 pyarrow
 rapidfuzz
+bs4
