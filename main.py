@@ -20,7 +20,7 @@ from google.oauth2 import service_account
 # SELENIUM OPTIONS
 # ─────────────────────────────────────────────
 options = Options()
-options.add_argument("--headless=new")
+# options.add_argument("--headless=new")
 options.add_argument("--disable-gpu")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
@@ -59,7 +59,21 @@ for click_count in range(MAX_LOAD_MORE_CLICKS):
         var el = document.getElementById('system-ialert');
         if (el) el.remove();
     """)
+    
+    # Now collect all job links from the fully loaded page
+    job_cards = driver.find_elements(By.CSS_SELECTOR, "a.job-link, h2.job-title a, li.search-result a[href*='/job/']")
 
+    # Fallback: broader selector
+    if not job_cards:
+        job_cards = driver.find_elements(By.CSS_SELECTOR, "a[href*='/job/']")
+
+    seen = set()
+    for card in job_cards:
+        href = card.get_attribute("href")
+        if href and href not in seen:
+            seen.add(href)
+            job_urls.append(href)
+        
     try:
         next_btn = WebDriverWait(driver, 8).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "a.next"))
@@ -71,23 +85,10 @@ for click_count in range(MAX_LOAD_MORE_CLICKS):
         print("ℹ️ No more 'Next' button found — all pages visited.")
         break
 
-# Now collect all job links from the fully loaded page
-job_cards = driver.find_elements(By.CSS_SELECTOR, "a.job-link, h2.job-title a, li.search-result a[href*='/job/']")
-
-# Fallback: broader selector
-if not job_cards:
-    job_cards = driver.find_elements(By.CSS_SELECTOR, "a[href*='/job/']")
-
-seen = set()
-for card in job_cards:
-    href = card.get_attribute("href")
-    if href and href not in seen:
-        seen.add(href)
-        job_urls.append(href)
 
 driver.quit()
+job_urls = set(job_urls)
 print(f"Collected {len(job_urls)} job URLs")
-print(job_urls[:5])
 
 
 #------------------------CHECK DUPLICATES URL DANS BIGQUERY--------------------------------------------------
