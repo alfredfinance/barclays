@@ -15,6 +15,8 @@ from rapidfuzz import process, fuzz
 from difflib import get_close_matches
 from google.cloud import bigquery
 from google.oauth2 import service_account
+from zoneinfo import ZoneInfo
+
 
 # ─────────────────────────────────────────────
 # SELENIUM OPTIONS
@@ -233,10 +235,12 @@ for job_url in job_urls:
                 continue
 
         # ── Timestamps ─────────────────────────────────────────────────────
-        scrappedDateTime    = datetime.datetime.now().isoformat()
-        scrappedDate        = datetime.datetime.now().strftime("%Y-%m-%d")
-        scrappedHour        = datetime.datetime.now().strftime("%H")
-        scrappedMinutes     = datetime.datetime.now().strftime("%M")
+
+        paris_now = datetime.datetime.now(ZoneInfo("Europe/Paris"))
+        scrappedDateTime    = paris_now.isoformat()
+        scrappedDate        = paris_now.strftime("%Y-%m-%d")
+        scrappedHour        = paris_now.strftime("%H")
+        scrappedMinutes     = paris_now.strftime("%M")
 
         print(f"  → {title} | {location} | {division}")
 
