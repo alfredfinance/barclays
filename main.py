@@ -87,6 +87,7 @@ for card in job_cards:
 
 driver.quit()
 print(f"Collected {len(job_urls)} job URLs")
+print(job_urls.head(5))
 
 
 #------------------------CHECK DUPLICATES URL DANS BIGQUERY--------------------------------------------------
